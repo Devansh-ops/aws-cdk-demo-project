@@ -137,3 +137,8 @@ Install AWS SDK in the react app
 npm install @aws-sdk/client-s3
 ```
 
+## Deploy and Update config
+```bash
+npm run deploy -- STACKNAME
+```
+default stack is `FovusCodingChallengeStack` , if it is not passed

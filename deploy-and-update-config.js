@@ -4,9 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 // Function to deploy the CDK stack
-function deployCDKStack() {
-  console.log('Deploying CDK stack...');
-  execSync('cdk deploy DevanshStack2 --require-approval never', { stdio: 'inherit' });
+function deployCDKStack(stackName) {
+  console.log(`Deploying CDK stack: ${stackName}...`);
+  execSync(`cdk deploy ${stackName} --require-approval never`, { stdio: 'inherit' });
   console.log('CDK stack deployed.');
 }
 
@@ -38,9 +38,12 @@ function updateEnvFile(bucketUrl) {
 
 // Main script
 (async () => {
+  const defaultStackName = 'FovusCodingChallengeStack';
+  const stackName = process.argv[2] || defaultStackName;
+
   try {
-    deployCDKStack();
-    const bucketUrl = await getStackOutput('DevanshStack2', 'BucketURL');
+    deployCDKStack(stackName);
+    const bucketUrl = await getStackOutput(stackName, 'BucketURL');
     updateEnvFile(bucketUrl);
   } catch (error) {
     console.error('Error:', error);
