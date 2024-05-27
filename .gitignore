@@ -1,5 +1,6 @@
 *.js
 !jest.config.js
+!deploy-and-update-config-devansh-stack-2.js
 *.d.ts
 node_modules
 
