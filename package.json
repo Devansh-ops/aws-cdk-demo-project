@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "node deploy-and-update-config.js"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "aws-cdk-lib": "^2.143.0",
+    "aws-sdk": "^2.1628.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }

@@ -1,8 +1,13 @@
 *.js
 !jest.config.js
+!deploy-and-update-config.js
 *.d.ts
 node_modules
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Exclude the fovus-file-upload directory
+!fovus-file-upload/
+!fovus-file-upload/**

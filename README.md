@@ -20,12 +20,14 @@ on Windows (CMD)
 ```bash
 set CDK_DEFAULT_ACCOUNT=your-account-id
 set CDK_DEFAULT_REGION=your-region
+set AWS_REGION=us-east-1
 ```
 
 on macOS/Linux
 ```bash
 export CDK_DEFAULT_ACCOUNT=your-account-id
 export CDK_DEFAULT_REGION=your-region
+export AWS_REGION=us-east-1
 ```
 
 ## Bootstrap the CDK env
@@ -137,3 +139,8 @@ Install AWS SDK in the react app
 npm install @aws-sdk/client-s3
 ```
 
+## Deploy and Update config
+```bash
+npm run deploy -- STACKNAME
+```
+default stack is `FovusCodingChallengeStack` , if it is not passed
