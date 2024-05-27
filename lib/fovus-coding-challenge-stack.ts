@@ -7,25 +7,60 @@ export class FovusCodingChallengeStack extends cdk.Stack {
     super(scope, id, props);
 
     // S3 Bucket
+    // Create the S3 bucket
     const bucket = new s3.Bucket(this, 'InputBucket', {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: false,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      blockPublicAccess: new s3.BlockPublicAccess({
+        blockPublicAcls: false,       // Allow public ACLs to be applied
+        blockPublicPolicy: false,     // Allow bucket policies to grant public access
+        ignorePublicAcls: false,      // Consider public ACLs for access control
+        restrictPublicBuckets: false, // Do not restrict public access at the bucket level
+      }),
     });
 
-    // bucket.addToResourcePolicy(new iam.PolicyStatement({
-    //   actions: ['s3:PutObject'],
-    //   resources: [`${bucket.bucketArn}/*`],
-    //   principals: [new iam.AnyPrincipal()],
-    // }));
-
-    // Add a more restrictive policy
+    // Policy to allow anyone to put objects into the bucket
     bucket.addToResourcePolicy(new iam.PolicyStatement({
       actions: ['s3:PutObject'],
       resources: [`${bucket.bucketArn}/*`],
-      principals: [new iam.AccountPrincipal(cdk.Aws.ACCOUNT_ID)], // restrict to current account
+      principals: [new iam.AnyPrincipal()],
     }));
+
+    // Policy to deny all other actions except to the bucket owner
+    bucket.addToResourcePolicy(new iam.PolicyStatement({
+      actions: [
+        's3:GetObject',
+        's3:ListBucket',
+        's3:DeleteObject',
+        's3:PutObjectAcl',
+        's3:GetObjectAcl'
+      ],
+      resources: [
+        `${bucket.bucketArn}`,
+        `${bucket.bucketArn}/*`
+      ],
+      effect: iam.Effect.DENY,
+      principals: [new iam.AnyPrincipal()],
+      conditions: {
+        StringNotEquals: {
+          "aws:PrincipalArn": [
+            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`,
+            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:user/devansh-aws`
+          ]
+        }
+      }
+    }));
+
+    // Create S3 Access Point
+    const accessPoint = new s3.CfnAccessPoint(this, 'InputBucketAccessPoint', {
+      bucket: bucket.bucketName,
+      name: 'input-bucket-access-point',
+    });
+
+    new cdk.CfnOutput(this, 'AccessPointAlias', {
+      value: `arn:aws:s3:accesspoint:us-east-1:610259957758:input-bucket-access-point`,
+    });
 
     // // DynamoDB Table with stream enabled
     // const table = new dynamodb.Table(this, 'FileTable', {
