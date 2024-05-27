@@ -126,3 +126,14 @@ env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT
 cdk bootstrap
 cdk deploy
 ```
+
+## Create the react app
+```bash
+npx create-react-app fovus-file-upload
+cd fovus-file-upload
+```
+Install AWS SDK in the react app
+```bash
+npm install @aws-sdk/client-s3
+```
+
