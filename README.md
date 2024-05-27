@@ -94,10 +94,23 @@ export class FovusCodingChallengeStack extends cdk.Stack {
       principals: [new iam.AnyPrincipal()],
       conditions: {
         StringNotEquals: {
-          "aws:PrincipalArn": `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`
+          "aws:PrincipalArn": [
+            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`,
+            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:user/devansh-aws`
+          ]
         }
       }
     }));
+
+    // Create S3 Access Point
+    const accessPoint = new s3.CfnAccessPoint(this, 'InputBucketAccessPoint', {
+      bucket: bucket.bucketName,
+      name: 'input-bucket-access-point',
+    });
+
+    new cdk.CfnOutput(this, 'AccessPointAlias', {
+      value: `arn:aws:s3:accesspoint:us-east-1:610259957758:input-bucket-access-point`,
+    });
   }
 }
 
