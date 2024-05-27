@@ -33,3 +33,83 @@ export CDK_DEFAULT_REGION=your-region
 ```bash
 cdk bootstrap aws://your-account-id/your-region
 ```
+
+## Steps
+
+1. Install AWS CLI
+2. `aws configure`
+3. Install cdk 
+4. Run the commands
+```bash
+mkdir fovus-coding-challenge
+cd focus-coding challenge
+cdk init app --language typescript
+```
+5. Make lib/fovus-coding-challenge-stack
+
+```
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { aws_s3 as s3, aws_dynamodb as dynamodb, aws_lambda as lambda, aws_apigateway as apigateway, aws_ec2 as ec2, aws_iam as iam, aws_lambda_event_sources as lambdaEventSources } from 'aws-cdk-lib';
+
+export class FovusCodingChallengeStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    // S3 Bucket
+    // Create the S3 bucket
+    const bucket = new s3.Bucket(this, 'InputBucket', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      publicReadAccess: false,
+      blockPublicAccess: new s3.BlockPublicAccess({
+        blockPublicAcls: false,       // Allow public ACLs to be applied
+        blockPublicPolicy: false,     // Allow bucket policies to grant public access
+        ignorePublicAcls: false,      // Consider public ACLs for access control
+        restrictPublicBuckets: false, // Do not restrict public access at the bucket level
+      }),
+    });
+
+    // Policy to allow anyone to put objects into the bucket
+    bucket.addToResourcePolicy(new iam.PolicyStatement({
+      actions: ['s3:PutObject'],
+      resources: [`${bucket.bucketArn}/*`],
+      principals: [new iam.AnyPrincipal()],
+    }));
+
+    // Policy to deny all other actions except to the bucket owner
+    bucket.addToResourcePolicy(new iam.PolicyStatement({
+      actions: [
+        's3:GetObject',
+        's3:ListBucket',
+        's3:DeleteObject',
+        's3:PutObjectAcl',
+        's3:GetObjectAcl'
+      ],
+      resources: [
+        `${bucket.bucketArn}`,
+        `${bucket.bucketArn}/*`
+      ],
+      effect: iam.Effect.DENY,
+      principals: [new iam.AnyPrincipal()],
+      conditions: {
+        StringNotEquals: {
+          "aws:PrincipalArn": `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`
+        }
+      }
+    }));
+  }
+}
+
+```
+6. Add / uncomment the line in `bin/fovus-coding-challenge.ts`
+```
+env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+```
+7. export / set the variables `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`
+
+8. Run the commands
+```bash
+cdk bootstrap
+cdk deploy
+```
