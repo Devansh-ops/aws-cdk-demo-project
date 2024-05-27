@@ -22,7 +22,7 @@ const FileUpload = () => {
     }
 
     try {
-      const uploadUrl = `https://input-bucket-access-point-610259957758.s3-accesspoint.us-east-1.amazonaws.com/${selectedFile.name}`;
+      const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${selectedFile.name}`;
       await axios.put(uploadUrl, selectedFile, {
         headers: {
           'Content-Type': selectedFile.type,
