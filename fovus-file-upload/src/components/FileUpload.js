@@ -23,6 +23,7 @@ const FileUpload = () => {
 
     try {
       const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${selectedFile.name}`;
+      console.log("uploadUrl = " + uploadUrl)
       await axios.put(uploadUrl, selectedFile, {
         headers: {
           'Content-Type': selectedFile.type,

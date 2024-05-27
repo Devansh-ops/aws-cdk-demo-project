@@ -60,10 +60,10 @@ export class FovusCodingChallengeStack extends cdk.Stack {
       }
     }));
 
-    // Output the S3 bucket URL
+    // Output the S3 REST API endpoint
     new CfnOutput(this, 'BucketURL', {
-      value: bucket.bucketWebsiteUrl,
-      description: 'The URL of the S3 bucket',
+      value: `https://${bucket.bucketName}.s3.amazonaws.com`,
+      description: 'The REST API endpoint of the S3 bucket',
     });
   }
 }
