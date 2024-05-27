@@ -18,6 +18,14 @@ export class FovusCodingChallengeStack extends cdk.Stack {
         ignorePublicAcls: false,      // Consider public ACLs for access control
         restrictPublicBuckets: false, // Do not restrict public access at the bucket level
       }),
+      cors: [
+        {
+          allowedHeaders: ['*'],
+          allowedMethods: [s3.HttpMethods.PUT],
+          allowedOrigins: ['*'],
+          exposedHeaders: [],
+        },
+      ],
     });
 
     // Policy to allow anyone to put objects into the bucket
