@@ -14,11 +14,16 @@ export class FovusCodingChallengeStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
 
+    // bucket.addToResourcePolicy(new iam.PolicyStatement({
+    //   actions: ['s3:PutObject'],
+    //   resources: [`${bucket.bucketArn}/*`],
+    //   principals: [new iam.AnyPrincipal()],
+    // }));
+
+    // Add a more restrictive policy
     bucket.addToResourcePolicy(new iam.PolicyStatement({
       actions: ['s3:PutObject'],
       resources: [`${bucket.bucketArn}/*`],
-      principals: [new iam.AnyPrincipal()],
-    }));
 
     // DynamoDB Table with stream enabled
     const table = new dynamodb.Table(this, 'FileTable', {
