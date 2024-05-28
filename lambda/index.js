@@ -1,13 +1,12 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {
-  DynamoDBDocumentClient,
-  ScanCommand,
-  PutCommand,
-  GetCommand,
-  DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 
-import { nanoid } from "nanoid";
+const {
+  DynamoDBDocumentClient,
+  PutCommand,
+} = require("@aws-sdk/lib-dynamodb");
+
+const { nanoid } = require("nanoid");
+
 
 const client = new DynamoDBClient({});
 
@@ -17,7 +16,7 @@ const tableName = process.env.TABLE_NAME;
 
 const s3Bucket = process.env.BUCKET_NAME;
 
-export const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   let body;
   let statusCode = 200;
   const headers = {
@@ -26,7 +25,7 @@ export const handler = async (event, context) => {
 
   try {
     switch (event.routeKey) {
-      case "PUT /items":
+      default:
         let requestJSON = JSON.parse(event.body);
         await dynamo.send(
           new PutCommand({
@@ -40,8 +39,6 @@ export const handler = async (event, context) => {
         );
         body = `Put item ${requestJSON.id}`;
         break;
-      default:
-        throw new Error(`Unsupported route: "${event.routeKey}"`);
     }
   } catch (err) {
     statusCode = 400;
