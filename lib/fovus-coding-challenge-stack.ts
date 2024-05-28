@@ -55,7 +55,6 @@ export class FovusCodingChallengeStack extends cdk.Stack {
         StringNotEquals: {
           "aws:PrincipalArn": [
             `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`,
-            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:user/devansh-aws`
           ]
         }
       }
@@ -65,6 +64,12 @@ export class FovusCodingChallengeStack extends cdk.Stack {
     new CfnOutput(this, 'BucketURL', {
       value: `https://${bucket.bucketName}.s3.${cdk.Aws.REGION}.amazonaws.com`,
       description: 'The REST API endpoint of the S3 bucket',
+    });
+
+    // Output the S3 bucket name
+    new CfnOutput(this, 'BucketName', {
+      value: bucket.bucketName,
+      description: 'The name of the S3 bucket',
     });
 
     /* S3 bucket - END */
@@ -112,6 +117,12 @@ export class FovusCodingChallengeStack extends cdk.Stack {
     // add a /add-item resource to the API Gateway
     const addItemResource = api.root.addResource('add-item');
     addItemResource.addMethod('POST');
+
+    // Output the API Gateway endpoint URL
+    new CfnOutput(this, 'ApiEndpoint', {
+      value: api.url,
+      description: 'The endpoint URL of the API Gateway',
+    });
 
     /* API Gateway - END */
   }

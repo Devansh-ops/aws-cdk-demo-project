@@ -25,18 +25,20 @@ function getStackOutput(stackName, outputKey) {
 }
 
 // Function to update the React app's .env file
-function updateEnvFile(bucketUrl) {
+function updateEnvFile(key, value) {
   const envFilePath = path.join(__dirname, './fovus-file-upload/.env');
   let envContent = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf8') : '';
 
-  if (envContent.includes('REACT_APP_S3_BUCKET_URL')) {
-    envContent = envContent.replace(/REACT_APP_S3_BUCKET_URL=.*/, `REACT_APP_S3_BUCKET_URL=${bucketUrl}`);
+  const envKeyValuePattern = new RegExp(`^${key}=.*`, 'm');
+
+  if (envKeyValuePattern.test(envContent)) {
+    envContent = envContent.replace(envKeyValuePattern, `${key}=${value}`);
   } else {
-    envContent += `\nREACT_APP_S3_BUCKET_URL=${bucketUrl}\n`;
+    envContent += `\n${key}=${value}\n`;
   }
 
   fs.writeFileSync(envFilePath, envContent, 'utf8');
-  console.log(`Updated .env file with S3 bucket URL: ${bucketUrl}`);
+  console.log(`Updated .env file with ${key}: ${value}`);
 }
 
 // Function to install npm dependencies
@@ -77,7 +79,12 @@ function zipLambdaDirectory() {
     zipLambdaDirectory();
     deployCDKStack(stackName);
     const bucketUrl = await getStackOutput(stackName, 'BucketURL');
-    updateEnvFile(bucketUrl);
+    const bucketName = await getStackOutput(stackName, 'BucketName');
+    const ApiEndpoint = await getStackOutput(stackName, 'ApiEndpoint');
+    updateEnvFile("REACT_APP_S3_BUCKET_URL", bucketUrl);
+    updateEnvFile("REACT_APP_S3_BUCKET_NAME", bucketName);
+    updateEnvFile("REACT_APP_API_ENDPOINT", ApiEndpoint);
+
   } catch (error) {
     console.error('Error:', error);
   }
