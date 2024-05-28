@@ -69,8 +69,8 @@ export AWS_SECRET_ACCESS_KEY=your-access-key-secret
    Clone this repository to your local machine and navigate into the project directory:
 
    ```bash
-   git clone https://github.com/your-repo/coding-challenge.git
-   cd coding-challenge
+   git clone https://github.com/Devansh-ops/aws-cdk-demo-project.git
+   cd aws-cdk-demo-project
    ```
 
 5. **Set Environment Variables**
