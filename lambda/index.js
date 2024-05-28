@@ -32,9 +32,9 @@ export const handler = async (event, context) => {
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: nanoid();
-              price: requestJSON.price,
-              name: requestJSON.name,
+              id: nanoid(),
+              input_text: requestJSON.input_text,
+              input_file_path: requestJSON.input_file_path,
             },
           })
         );

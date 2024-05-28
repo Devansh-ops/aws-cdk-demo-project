@@ -2,7 +2,8 @@
 !jest.config.js
 !deploy-and-update-config.js
 !destroy-and-delete-config.js
-!lambda/*.js
+!lambda/**
+!lambda/
 *.d.ts
 node_modules
 
