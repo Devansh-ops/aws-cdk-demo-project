@@ -2,14 +2,14 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { aws_s3 as s3, aws_lambda as lambda, aws_dynamodb as dynamodb, aws_apigateway as apigateway, CfnOutput, CustomResource, aws_logs as logs, aws_iam as iam } from 'aws-cdk-lib';
 
-export class FovusCodingChallengeStack extends cdk.Stack {
+export class CodingChallengeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     /* S3 bucket - START */
 
     // Create the S3 bucket
-    const bucket = new s3.Bucket(this, 'FovusBucket', {
+    const bucket = new s3.Bucket(this, 'Bucket', {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: false,
@@ -89,7 +89,7 @@ export class FovusCodingChallengeStack extends cdk.Stack {
     /* Lambda function - START */
 
     // Create the Lambda function
-    const lambdaFunction = new lambda.Function(this, 'FovusLambda', {
+    const lambdaFunction = new lambda.Function(this, 'Lambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('lambda.zip'),
       handler: 'index.handler',
@@ -116,7 +116,48 @@ export class FovusCodingChallengeStack extends cdk.Stack {
 
     // add a /add-item resource to the API Gateway
     const addItemResource = api.root.addResource('add-item');
-    addItemResource.addMethod('POST');
+    addItemResource.addMethod('POST', new apigateway.LambdaIntegration(lambdaFunction), {
+      // Enable CORS
+      methodResponses: [
+        {
+          statusCode: '200',
+          responseParameters: {
+            'method.response.header.Access-Control-Allow-Origin': true,
+            'method.response.header.Access-Control-Allow-Headers': true,
+            'method.response.header.Access-Control-Allow-Methods': true,
+          },
+        },
+      ],
+    });
+
+    // Add an OPTIONS method to handle CORS preflight requests
+    addItemResource.addMethod('OPTIONS', new apigateway.MockIntegration({
+      integrationResponses: [
+        {
+          statusCode: '200',
+          responseParameters: {
+            'method.response.header.Access-Control-Allow-Origin': "'*'",
+            'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+            'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,POST'",
+          },
+        },
+      ],
+      passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}',
+      },
+    }), {
+      methodResponses: [
+        {
+          statusCode: '200',
+          responseParameters: {
+            'method.response.header.Access-Control-Allow-Origin': true,
+            'method.response.header.Access-Control-Allow-Headers': true,
+            'method.response.header.Access-Control-Allow-Methods': true,
+          },
+        },
+      ],
+    });
 
     // Output the API Gateway endpoint URL
     new CfnOutput(this, 'ApiEndpoint', {
