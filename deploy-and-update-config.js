@@ -36,12 +36,31 @@ function updateEnvFile(bucketUrl) {
   console.log(`Updated .env file with S3 bucket URL: ${bucketUrl}`);
 }
 
+// Function to install npm dependencies in the lambda directory
+function installDependencies() {
+  const lambdaDir = path.join(__dirname, 'lambda');
+  console.log('Installing npm dependencies in the lambda directory...');
+  execSync(`npm install`, { cwd: lambdaDir, stdio: 'inherit' });
+  console.log('Npm dependencies installed.');
+}
+
+// Function to zip the lambda directory
+function zipLambdaDirectory() {
+  const lambdaDir = path.join(__dirname, 'lambda');
+  const zipFilePath = path.join(__dirname, 'lambda.zip');
+  console.log('Zipping lambda directory...');
+  execSync(`zip -r ${zipFilePath} .`, { cwd: lambdaDir, stdio: 'inherit' });
+  console.log('Lambda directory zipped.');
+}
+
 // Main script
 (async () => {
   const defaultStackName = 'FovusCodingChallengeStack';
   const stackName = process.argv[2] || defaultStackName;
 
   try {
+    installDependencies();
+    zipLambdaDirectory();
     deployCDKStack(stackName);
     const bucketUrl = await getStackOutput(stackName, 'BucketURL');
     updateEnvFile(bucketUrl);
