@@ -33,7 +33,7 @@ const FileUpload = () => {
       alert(`File uploaded successfully: ${selectedFile.name}`);
 
       // Call the API endpoint after file upload
-      const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+      const apiEndpoint = process.env.REACT_APP_API_ENDPOINT + "add-item";
       const apiPayload = {
         input_text: inputText,
         input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${selectedFile.name}`,
