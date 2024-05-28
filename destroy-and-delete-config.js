@@ -21,6 +21,17 @@ function removeEnvFile() {
     }
 }
 
+// Function to delete the lambda.zip file
+function deleteLambdaZip() {
+    const zipFilePath = path.join(__dirname, 'lambda.zip');
+    if (fs.existsSync(zipFilePath)) {
+      fs.unlinkSync(zipFilePath);
+      console.log('lambda.zip file deleted.');
+    } else {
+      console.log('lambda.zip file does not exist.');
+    }
+  }
+
 // Main script
 (async () => {
     const defaultStackName = 'FovusCodingChallengeStack';
@@ -28,6 +39,7 @@ function removeEnvFile() {
 
     try {
         removeEnvFile();
+        deleteLambdaZip();
         destroyCDKStack(stackName);
     } catch (error) {
         console.error('Error:', error);
