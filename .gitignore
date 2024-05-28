@@ -18,3 +18,5 @@ cdk.out
 # Exclude lambda dir
 !lambda/
 !lambda/**
+
+lambda.zip
