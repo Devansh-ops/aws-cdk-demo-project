@@ -1,11 +1,11 @@
-const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
-const {
+import {
   DynamoDBDocumentClient,
   PutCommand,
-} = require("@aws-sdk/lib-dynamodb");
+} from "@aws-sdk/lib-dynamodb";
 
-const { nanoid } = require("nanoid");
+import { nanoid } from "nanoid";
 
 
 const client = new DynamoDBClient({});
@@ -16,7 +16,7 @@ const tableName = process.env.TABLE_NAME;
 
 const s3Bucket = process.env.BUCKET_NAME;
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   let body;
   let statusCode = 200;
   const headers = {
