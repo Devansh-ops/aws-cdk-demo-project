@@ -5,6 +5,9 @@ const path = require('path');
 
 // Function to deploy the CDK stack
 function deployCDKStack(stackName) {
+  console.log(`Bootstrapping CDK`);
+  execSync(`cdk bootstrap --require-approval never`, { stdio: 'inherit' });
+  console.log('CDK Bootstrapped');
   console.log(`Deploying CDK stack: ${stackName}...`);
   execSync(`cdk deploy ${stackName} --require-approval never`, { stdio: 'inherit' });
   console.log('CDK stack deployed.');
@@ -36,9 +39,20 @@ function updateEnvFile(bucketUrl) {
   console.log(`Updated .env file with S3 bucket URL: ${bucketUrl}`);
 }
 
-// Function to install npm dependencies in the lambda directory
+// Function to install npm dependencies
 function installDependencies() {
+  const parentDir = __dirname;
+  const appDir = path.join(__dirname, 'fovus-file-upload');
   const lambdaDir = path.join(__dirname, 'lambda');
+
+  console.log('Installing npm dependencies in the parent directory...');
+  execSync(`npm install`, { cwd: parentDir, stdio: 'inherit' });
+  console.log('Npm dependencies installed.');
+
+  console.log('Installing npm dependencies in the app directory...');
+  execSync(`npm install`, { cwd: appDir, stdio: 'inherit' });
+  console.log('Npm dependencies installed.');
+
   console.log('Installing npm dependencies in the lambda directory...');
   execSync(`npm install`, { cwd: lambdaDir, stdio: 'inherit' });
   console.log('Npm dependencies installed.');
