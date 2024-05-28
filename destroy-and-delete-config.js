@@ -39,8 +39,8 @@ function deleteLambdaZip() {
 
     try {
         removeEnvFile();
-        deleteLambdaZip();
         destroyCDKStack(stackName);
+        deleteLambdaZip();
     } catch (error) {
         console.error('Error:', error);
     }
