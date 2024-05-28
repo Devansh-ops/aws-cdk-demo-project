@@ -21,6 +21,9 @@ on Windows (CMD)
 set CDK_DEFAULT_ACCOUNT=your-account-id
 set CDK_DEFAULT_REGION=your-region
 set AWS_REGION=your-region
+set AWS_DEFAULT_REGION=your-region
+set AWS_ACCESS_KEY_ID=your-access-key-id
+set AWS_SECRET_ACCESS_KEY=your-access-key-secret
 ```
 
 on macOS/Linux
@@ -28,6 +31,9 @@ on macOS/Linux
 export CDK_DEFAULT_ACCOUNT=your-account-id
 export CDK_DEFAULT_REGION=your-region
 export AWS_REGION=your-region
+export AWS_DEFAULT_REGION=your-region
+export AWS_ACCESS_KEY_ID=your-access-key-id
+export AWS_SECRET_ACCESS_KEY=your-access-key-secret
 ```
 
 ## Steps to run
