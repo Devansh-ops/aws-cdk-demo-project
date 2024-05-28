@@ -1,20 +1,12 @@
-# Welcome to your CDK TypeScript project
+# Coding Challenge
 
-This is a blank project for CDK development with TypeScript.
+The goal was to use CDK and Cloudformation to deploy an app on AWS. The stack includes the following resources:
+- Lambda function
+- S3 Bucket
+- API Endpoint
+- DynamoDB Table
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
-
-
-## Set AWS account and region to use
+## Set AWS account and region
 
 on Windows (CMD)
 ```bash
@@ -42,22 +34,13 @@ export AWS_SECRET_ACCESS_KEY=your-access-key-secret
 2. `aws configure`
 3. Install cdk 
 4. Clone the repo and cd into it
-5. export / set the variables `CDK_DEFAULT_ACCOUNT`, `CDK_DEFAULT_REGION`, and `AWS_REGION`
-6. Install packages
+5. export / set the variables
+6. Deploy the stack (also installs npm packages, and creates config)
 ```bash
-npm i
+npm run deploy
 ```
-7. Deploy and Update config
+7. Run the frontend
 ```bash
-npm run deploy STACKNAME
+cd fovus-file-upload && npm start
 ```
-default stack is `FovusCodingChallengeStack` , if it is not passed
-8. cd into the react app
-```bash
-cd fovus-file-upload
-```
-9. Start the app
-```bash
-npm start
-```
-10. open the app at `localhost:3000`
+8. open the app at `localhost:3000`
