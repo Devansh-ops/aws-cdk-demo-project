@@ -86,7 +86,14 @@ export class FovusCodingChallengeStack extends cdk.Stack {
     // Create the Lambda function
     const lambdaFunction = new lambda.Function(this, 'FovusLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
-      code: lambda.Code.fromAsset('lambda'),
+      code: lambda.Code.fromAsset('lambda', {
+        bundling: {
+          command: [
+            "bash", "-c", "npm install && npm run build && cp -r dist/* /asset-output"
+          ],
+          image: lambda.Runtime.NODEJS_LATEST.bundlingImage,
+        },
+      }),
       handler: 'index.handler',
       environment: {
         BUCKET_NAME: bucket.bucketName,
