@@ -1,5 +1,5 @@
 {
-  "name": "fovus-file-upload",
+  "name": "file-upload",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

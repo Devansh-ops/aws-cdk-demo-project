@@ -12,9 +12,9 @@ cdk.context.json
 .cdk.staging
 cdk.out
 
-# Exclude the fovus-file-upload directory
-!fovus-file-upload/
-!fovus-file-upload/**
+# Exclude the file-upload directory
+!file-upload/
+!file-upload/**
 
 # Envirnoment variables
 

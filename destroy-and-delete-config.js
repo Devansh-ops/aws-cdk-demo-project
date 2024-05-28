@@ -12,7 +12,7 @@ function destroyCDKStack(stackName) {
 
 // Function to remove the S3 bucket URL from the React app's .env file
 function removeEnvFile() {
-    const envFilePath = path.join(__dirname, './fovus-file-upload/.env');
+    const envFilePath = path.join(__dirname, './file-upload/.env');
     if (fs.existsSync(envFilePath)) {
         fs.unlinkSync(envFilePath);
         console.log('.env file removed.');
@@ -34,7 +34,7 @@ function deleteLambdaZip() {
 
 // Main script
 (async () => {
-    const defaultStackName = 'FovusCodingChallengeStack';
+    const defaultStackName = 'CodingChallengeStack';
     const stackName = process.argv[2] || defaultStackName;
 
     try {

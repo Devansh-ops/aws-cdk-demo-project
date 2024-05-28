@@ -1,6 +1,6 @@
-## Fovus Coding Challenge - AWS Deployment with CDK
+## Coding Challenge - AWS Deployment with CDK
 
-Welcome to the Fovus Coding Challenge! This project demonstrates the deployment of a full-stack application on AWS using AWS Cloud Development Kit (CDK) and CloudFormation. The stack includes the following AWS resources:
+Welcome to the  Coding Challenge! This project demonstrates the deployment of a full-stack application on AWS using AWS Cloud Development Kit (CDK) and CloudFormation. The stack includes the following AWS resources:
 
 - AWS Lambda Function
 - Amazon S3 Bucket
@@ -69,8 +69,8 @@ export AWS_SECRET_ACCESS_KEY=your-access-key-secret
    Clone this repository to your local machine and navigate into the project directory:
 
    ```bash
-   git clone https://github.com/your-repo/fovus-coding-challenge.git
-   cd fovus-coding-challenge
+   git clone https://github.com/your-repo/coding-challenge.git
+   cd coding-challenge
    ```
 
 5. **Set Environment Variables**
@@ -90,7 +90,7 @@ export AWS_SECRET_ACCESS_KEY=your-access-key-secret
    Navigate to the frontend directory and start the development server:
 
    ```bash
-   cd fovus-file-upload
+   cd file-upload
    npm start
    ```
 
@@ -104,7 +104,7 @@ The project is organized as follows:
 
 - **infrastructure**: Contains the CDK stack definitions and resource configurations.
 - **lambda**: Contains the source code for the Lambda function.
-- **fovus-file-upload**: The React frontend application.
+- **file-upload**: The React frontend application.
 
 ### Key Features
 

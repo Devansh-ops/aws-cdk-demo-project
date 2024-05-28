@@ -1,8 +1,8 @@
 {
-  "name": "fovus-coding-challenge",
+  "name": "coding-challenge",
   "version": "0.1.0",
   "bin": {
-    "fovus-coding-challenge": "bin/fovus-coding-challenge.js"
+    "coding-challenge": "bin/coding-challenge.js"
   },
   "scripts": {
     "build": "tsc",

@@ -26,7 +26,7 @@ function getStackOutput(stackName, outputKey) {
 
 // Function to update the React app's .env file
 function updateEnvFile(key, value) {
-  const envFilePath = path.join(__dirname, './fovus-file-upload/.env');
+  const envFilePath = path.join(__dirname, './file-upload/.env');
   let envContent = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf8') : '';
 
   const envKeyValuePattern = new RegExp(`^${key}=.*`, 'm');
@@ -44,7 +44,7 @@ function updateEnvFile(key, value) {
 // Function to install npm dependencies
 function installDependencies() {
   const parentDir = __dirname;
-  const appDir = path.join(__dirname, 'fovus-file-upload');
+  const appDir = path.join(__dirname, 'file-upload');
   const lambdaDir = path.join(__dirname, 'lambda');
 
   console.log('Installing npm dependencies in the parent directory...');
@@ -71,7 +71,7 @@ function zipLambdaDirectory() {
 
 // Main script
 (async () => {
-  const defaultStackName = 'FovusCodingChallengeStack';
+  const defaultStackName = 'CodingChallengeStack';
   const stackName = process.argv[2] || defaultStackName;
 
   try {
