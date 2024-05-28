@@ -31,9 +31,27 @@ const FileUpload = () => {
       });
 
       alert(`File uploaded successfully: ${selectedFile.name}`);
+
+      // Call the API endpoint after file upload
+      const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+      const apiPayload = {
+        input_text: inputText,
+        input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${selectedFile.name}`,
+      };
+
+      const apiResponse = await axios.post(apiEndpoint, apiPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      alert('API call successful: ' + apiResponse.data.message);
+
+      console.log('API Response:', apiResponse.data);
+
     } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Error uploading file. Please try again.');
+      console.error('Error:', error);
+      alert('Error occurred. Please try again.');
     }
   };
 
