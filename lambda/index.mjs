@@ -45,6 +45,7 @@ export const handler = async (event, context) => {
     ...response,
     headers: {
       "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
       ...response.headers,
     },
   };
@@ -55,6 +56,9 @@ const handlePostRequest = async (event) => {
     return {
       statusCode: 400,
       body: JSON.stringify({ message: "Invalid request, no body provided" }),
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
     };
   }
 
@@ -63,6 +67,9 @@ const handlePostRequest = async (event) => {
     return {
       statusCode: 400,
       body: JSON.stringify({ message: "Missing required fields: input_text, input_file_path" }),
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
     };
   }
 
@@ -77,5 +84,8 @@ const handlePostRequest = async (event) => {
   return {
     statusCode: 201,
     body: JSON.stringify({ message: `Item created with id ${item.id}`, item }),
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    }
   };
 };
