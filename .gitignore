@@ -2,8 +2,6 @@
 !jest.config.js
 !deploy-and-update-config.js
 !destroy-and-delete-config.js
-!lambda/**
-!lambda/
 *.d.ts
 node_modules
 
@@ -16,3 +14,7 @@ cdk.out
 !fovus-file-upload/**
 
 # Envirnoment variables
+
+# Exclude lambda dir
+!lambda/
+!lambda/**

@@ -1,19 +1,14 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-
 import {
   DynamoDBDocumentClient,
   PutCommand,
 } from "@aws-sdk/lib-dynamodb";
-
 import { nanoid } from "nanoid";
 
-
 const client = new DynamoDBClient({});
-
 const dynamo = DynamoDBDocumentClient.from(client);
 
 const tableName = process.env.TABLE_NAME;
-
 const s3Bucket = process.env.BUCKET_NAME;
 
 export const handler = async (event, context) => {
@@ -27,6 +22,9 @@ export const handler = async (event, context) => {
     switch (event.routeKey) {
       default:
         let requestJSON = JSON.parse(event.body);
+
+        // Commenting out the PutCommand to DynamoDB
+        /*
         await dynamo.send(
           new PutCommand({
             TableName: tableName,
@@ -38,18 +36,20 @@ export const handler = async (event, context) => {
           })
         );
         body = `Put item ${requestJSON.id}`;
+        */
+
+        // Return the received request JSON
+        body = requestJSON;
         break;
     }
   } catch (err) {
     statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    body = { error: err.message };
   }
 
   return {
     statusCode,
-    body,
+    body: JSON.stringify(body),
     headers,
   };
 };
