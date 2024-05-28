@@ -10,20 +10,6 @@ function destroyCDKStack(stackName) {
     console.log('CDK stack destroyed.');
 }
 
-// Function to remove the CloudFormation output
-function removeStackOutput(stackName, outputKey) {
-    const cloudformation = new AWS.CloudFormation();
-    return cloudformation.describeStacks({ StackName: stackName }).promise()
-        .then(data => {
-            const outputs = data.Stacks[0].Outputs;
-            const output = outputs.find(output => output.OutputKey === outputKey);
-            if (output) {
-                return cloudformation.deleteStack({ StackName: stackName }).promise();
-            }
-            return Promise.resolve();
-        });
-}
-
 // Function to remove the S3 bucket URL from the React app's .env file
 function removeEnvFile() {
     const envFilePath = path.join(__dirname, './fovus-file-upload/.env');
@@ -42,7 +28,6 @@ function removeEnvFile() {
 
     try {
         removeEnvFile();
-        await removeStackOutput(stackName, 'BucketURL');
         destroyCDKStack(stackName);
     } catch (error) {
         console.error('Error:', error);
