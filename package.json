@@ -9,7 +9,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "node deploy-and-update-config.js"
+    "deploy": "node deploy-and-update-config.js",
+    "destroy": "node destroy-and-delete-config.js"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

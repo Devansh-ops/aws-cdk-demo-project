@@ -11,3 +11,5 @@ cdk.out
 # Exclude the fovus-file-upload directory
 !fovus-file-upload/
 !fovus-file-upload/**
+
+# Envirnoment variables
