@@ -6,10 +6,10 @@ export class CodingChallengeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const bucket = this.createS3Bucket();
-    const table = this.createDynamoDBTable();
-    const lambdaFunction = this.createLambdaFunction(bucket, table);
-    const api = this.createApiGateway(lambdaFunction);
+    const bucket = this.createS3Bucket('MyBucket');
+    const table = this.createDynamoDBTable('FileTable');
+    const lambdaFunction = this.createLambdaFunction('MyLambdaFunction', bucket, table, 'lambda.zip', 'index.handler');
+    const api = this.createApiGateway(lambdaFunction, 'API');
 
     // Outputs
     new CfnOutput(this, 'BucketURL', {
@@ -28,8 +28,8 @@ export class CodingChallengeStack extends cdk.Stack {
     });
   }
 
-  private createS3Bucket(): s3.Bucket {
-    const bucket = new s3.Bucket(this, 'Bucket', {
+  private createS3Bucket(bucketName: string): s3.Bucket {
+    const bucket = new s3.Bucket(this, bucketName, {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: false,
@@ -72,18 +72,18 @@ export class CodingChallengeStack extends cdk.Stack {
     return bucket;
   }
 
-  private createDynamoDBTable(): dynamodb.Table {
-    return new dynamodb.Table(this, 'FileTable', {
+  private createDynamoDBTable(tableName: string): dynamodb.Table {
+    return new dynamodb.Table(this, tableName, {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
   }
 
-  private createLambdaFunction(bucket: s3.Bucket, table: dynamodb.Table): lambda.Function {
-    const lambdaFunction = new lambda.Function(this, 'Lambda', {
+  private createLambdaFunction(functionName: string, bucket: s3.Bucket, table: dynamodb.Table, assetPath: string, handler: string): lambda.Function {
+    const lambdaFunction = new lambda.Function(this, functionName, {
       runtime: lambda.Runtime.NODEJS_LATEST,
-      code: lambda.Code.fromAsset('lambda.zip'),
-      handler: 'index.handler',
+      code: lambda.Code.fromAsset(assetPath),
+      handler: handler,
       environment: {
         BUCKET_NAME: bucket.bucketName,
         TABLE_NAME: table.tableName,
@@ -98,8 +98,8 @@ export class CodingChallengeStack extends cdk.Stack {
     return lambdaFunction;
   }
 
-  private createApiGateway(lambdaFunction: lambda.Function): apigateway.LambdaRestApi {
-    const api = new apigateway.LambdaRestApi(this, 'API', {
+  private createApiGateway(lambdaFunction: lambda.Function, apiName: string): apigateway.LambdaRestApi {
+    const api = new apigateway.LambdaRestApi(this, apiName, {
       handler: lambdaFunction,
       proxy: false,
     });
