@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const uploadFileToS3 = async (file) => {
+  const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${file.name}`;
+  console.log("uploadUrl = " + uploadUrl);
+  await axios.put(uploadUrl, file, {
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+};
+
+const callApiEndpoint = async (inputText, fileName) => {
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT + "add-item";
+  const apiPayload = {
+    input_text: inputText,
+    input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${fileName}`,
+  };
+
+  const apiResponse = await axios.post(apiEndpoint, apiPayload, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return apiResponse.data;
+};
+
 const FileUpload = () => {
   const [inputText, setInputText] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -11,32 +37,6 @@ const FileUpload = () => {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-  };
-
-  const uploadFileToS3 = async (file) => {
-    const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${file.name}`;
-    console.log("uploadUrl = " + uploadUrl);
-    await axios.put(uploadUrl, file, {
-      headers: {
-        'Content-Type': file.type,
-      },
-    });
-  };
-
-  const callApiEndpoint = async (inputText, fileName) => {
-    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT + "add-item";
-    const apiPayload = {
-      input_text: inputText,
-      input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${fileName}`,
-    };
-
-    const apiResponse = await axios.post(apiEndpoint, apiPayload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    return apiResponse.data;
   };
 
   const handleSubmit = async (event) => {
