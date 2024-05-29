@@ -10,27 +10,16 @@ function destroyCDKStack(stackName) {
     console.log('CDK stack destroyed.');
 }
 
-// Function to remove the S3 bucket URL from the React app's .env file
-function removeEnvFile() {
-    const envFilePath = path.join(__dirname, './file-upload/.env');
-    if (fs.existsSync(envFilePath)) {
-        fs.unlinkSync(envFilePath);
-        console.log('.env file removed.');
+// Function to remove created stuff
+function removeFile(relativePath) {
+    const filePath = path.join(__dirname, relativePath);
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        console.log(relativePath + ' file removed.');
     } else {
-        console.log('.env file does not exist.');
+        console.log(relativePath + ' file does not exist.');
     }
 }
-
-// Function to delete the lambda.zip file
-function deleteLambdaZip() {
-    const zipFilePath = path.join(__dirname, 'lambda.zip');
-    if (fs.existsSync(zipFilePath)) {
-      fs.unlinkSync(zipFilePath);
-      console.log('lambda.zip file deleted.');
-    } else {
-      console.log('lambda.zip file does not exist.');
-    }
-  }
 
 // Main script
 (async () => {
@@ -38,9 +27,9 @@ function deleteLambdaZip() {
     const stackName = process.argv[2] || defaultStackName;
 
     try {
-        removeEnvFile();
+        removeFile('./file-upload/.env'); // Remove the React app's .env file
         destroyCDKStack(stackName);
-        deleteLambdaZip();
+        removeFile('lambda.zip') // Remove the lambda.zip file
     } catch (error) {
         console.error('Error:', error);
     }
