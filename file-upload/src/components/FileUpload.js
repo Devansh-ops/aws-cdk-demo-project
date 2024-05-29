@@ -13,6 +13,32 @@ const FileUpload = () => {
     setSelectedFile(event.target.files[0]);
   };
 
+  const uploadFileToS3 = async (file) => {
+    const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${file.name}`;
+    console.log("uploadUrl = " + uploadUrl);
+    await axios.put(uploadUrl, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+  };
+
+  const callApiEndpoint = async (inputText, fileName) => {
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT + "add-item";
+    const apiPayload = {
+      input_text: inputText,
+      input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${fileName}`,
+    };
+
+    const apiResponse = await axios.post(apiEndpoint, apiPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return apiResponse.data;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -22,33 +48,13 @@ const FileUpload = () => {
     }
 
     try {
-      const uploadUrl = `${process.env.REACT_APP_S3_BUCKET_URL}/${selectedFile.name}`;
-      console.log("uploadUrl = " + uploadUrl)
-      await axios.put(uploadUrl, selectedFile, {
-        headers: {
-          'Content-Type': selectedFile.type,
-        },
-      });
-
+      await uploadFileToS3(selectedFile);
       alert(`File uploaded successfully: ${selectedFile.name}`);
 
-      // Call the API endpoint after file upload
-      const apiEndpoint = process.env.REACT_APP_API_ENDPOINT + "add-item";
-      const apiPayload = {
-        input_text: inputText,
-        input_file_path: `${process.env.REACT_APP_S3_BUCKET_NAME}/${selectedFile.name}`,
-      };
+      const response = await callApiEndpoint(inputText, selectedFile.name);
+      alert('API call successful: ' + response.message);
 
-      const apiResponse = await axios.post(apiEndpoint, apiPayload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      alert('API call successful: ' + apiResponse.data.message);
-
-      console.log('API Response:', apiResponse.data);
-
+      console.log('API Response:', response);
     } catch (error) {
       console.error('Error:', error);
       alert('Error occurred. Please try again.');
@@ -57,21 +63,29 @@ const FileUpload = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Text Input:
-          <input type="text" value={inputText} onChange={handleInputChange} />
-        </label>
-      </div>
-      <div>
-        <label>
-          File Input:
-          <input type="file" onChange={handleFileChange} />
-        </label>
-      </div>
+      <TextInput value={inputText} onChange={handleInputChange} />
+      <FileInput onChange={handleFileChange} />
       <button type="submit">Submit</button>
     </form>
   );
 };
+
+const TextInput = ({ value, onChange }) => (
+  <div>
+    <label>
+      Text Input:
+      <input type="text" value={value} onChange={onChange} />
+    </label>
+  </div>
+);
+
+const FileInput = ({ onChange }) => (
+  <div>
+    <label>
+      File Input:
+      <input type="file" onChange={onChange} />
+    </label>
+  </div>
+);
 
 export default FileUpload;
