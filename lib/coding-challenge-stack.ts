@@ -1,23 +1,43 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { aws_s3 as s3, aws_lambda as lambda, aws_dynamodb as dynamodb, aws_apigateway as apigateway, CfnOutput, CustomResource, aws_logs as logs, aws_iam as iam } from 'aws-cdk-lib';
+import { aws_s3 as s3, aws_lambda as lambda, aws_dynamodb as dynamodb, aws_apigateway as apigateway, CfnOutput, aws_iam as iam } from 'aws-cdk-lib';
 
 export class CodingChallengeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    /* S3 bucket - START */
+    const bucket = this.createS3Bucket();
+    const table = this.createDynamoDBTable();
+    const lambdaFunction = this.createLambdaFunction(bucket, table);
+    const api = this.createApiGateway(lambdaFunction);
 
-    // Create the S3 bucket
+    // Outputs
+    new CfnOutput(this, 'BucketURL', {
+      value: `https://${bucket.bucketName}.s3.${cdk.Aws.REGION}.amazonaws.com`,
+      description: 'The REST API endpoint of the S3 bucket',
+    });
+
+    new CfnOutput(this, 'BucketName', {
+      value: bucket.bucketName,
+      description: 'The name of the S3 bucket',
+    });
+
+    new CfnOutput(this, 'ApiEndpoint', {
+      value: api.url,
+      description: 'The endpoint URL of the API Gateway',
+    });
+  }
+
+  private createS3Bucket(): s3.Bucket {
     const bucket = new s3.Bucket(this, 'Bucket', {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: false,
       blockPublicAccess: new s3.BlockPublicAccess({
-        blockPublicAcls: false,       // Allow public ACLs to be applied
-        blockPublicPolicy: false,     // Allow bucket policies to grant public access
-        ignorePublicAcls: false,      // Consider public ACLs for access control
-        restrictPublicBuckets: false, // Do not restrict public access at the bucket level
+        blockPublicAcls: false,
+        blockPublicPolicy: false,
+        ignorePublicAcls: false,
+        restrictPublicBuckets: false,
       }),
       cors: [
         {
@@ -38,57 +58,28 @@ export class CodingChallengeStack extends cdk.Stack {
 
     // Policy to deny all other actions except to the bucket owner
     bucket.addToResourcePolicy(new iam.PolicyStatement({
-      actions: [
-        's3:GetObject',
-        's3:ListBucket',
-        's3:DeleteObject',
-        's3:PutObjectAcl',
-        's3:GetObjectAcl'
-      ],
-      resources: [
-        `${bucket.bucketArn}`,
-        `${bucket.bucketArn}/*`
-      ],
+      actions: ['s3:GetObject', 's3:ListBucket', 's3:DeleteObject', 's3:PutObjectAcl', 's3:GetObjectAcl'],
+      resources: [`${bucket.bucketArn}`, `${bucket.bucketArn}/*`],
       effect: iam.Effect.DENY,
       principals: [new iam.AnyPrincipal()],
       conditions: {
         StringNotEquals: {
-          "aws:PrincipalArn": [
-            `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`,
-          ]
-        }
-      }
+          "aws:PrincipalArn": [`arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:root`],
+        },
+      },
     }));
 
-    // Output the S3 REST API endpoint
-    new CfnOutput(this, 'BucketURL', {
-      value: `https://${bucket.bucketName}.s3.${cdk.Aws.REGION}.amazonaws.com`,
-      description: 'The REST API endpoint of the S3 bucket',
-    });
+    return bucket;
+  }
 
-    // Output the S3 bucket name
-    new CfnOutput(this, 'BucketName', {
-      value: bucket.bucketName,
-      description: 'The name of the S3 bucket',
-    });
-
-    /* S3 bucket - END */
-
-
-
-    /* DynamoDB FileTable - START */
-
-    // Create the DynamoDB table
-    const table = new dynamodb.Table(this, 'FileTable', {
+  private createDynamoDBTable(): dynamodb.Table {
+    return new dynamodb.Table(this, 'FileTable', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
+  }
 
-    /* DynamoDB FileTable - END */
-
-    /* Lambda function - START */
-
-    // Create the Lambda function
+  private createLambdaFunction(bucket: s3.Bucket, table: dynamodb.Table): lambda.Function {
     const lambdaFunction = new lambda.Function(this, 'Lambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('lambda.zip'),
@@ -104,14 +95,13 @@ export class CodingChallengeStack extends cdk.Stack {
     // Grant the Lambda function read/write permissions to the DynamoDB table
     table.grantReadWriteData(lambdaFunction);
 
-    /* Lambda function - END */
+    return lambdaFunction;
+  }
 
-    /* API Gateway - START */
-
-    // Create the API Gateway
-    const api = new apigateway.LambdaRestApi(this, 'FovusAPI', {
+  private createApiGateway(lambdaFunction: lambda.Function): apigateway.LambdaRestApi {
+    const api = new apigateway.LambdaRestApi(this, 'API', {
       handler: lambdaFunction,
-      proxy: false
+      proxy: false,
     });
 
     // add a /add-item resource to the API Gateway
@@ -159,12 +149,6 @@ export class CodingChallengeStack extends cdk.Stack {
       ],
     });
 
-    // Output the API Gateway endpoint URL
-    new CfnOutput(this, 'ApiEndpoint', {
-      value: api.url,
-      description: 'The endpoint URL of the API Gateway',
-    });
-
-    /* API Gateway - END */
+    return api;
   }
 }
