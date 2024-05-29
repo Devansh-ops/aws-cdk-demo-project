@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/be5732abab3993a31e90/maintainability)](https://codeclimate.com/github/Devansh-ops/aws-cdk-demo-project/maintainability)
+
 ## Coding Challenge - AWS Deployment with CDK
 
 Welcome to the  Coding Challenge! This project demonstrates the deployment of a full-stack application on AWS using AWS Cloud Development Kit (CDK) and CloudFormation. The stack includes the following AWS resources:
